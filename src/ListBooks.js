@@ -20,19 +20,30 @@ class ListBooks extends Component {
   state = {
     books: []
   };
+
   componentDidMount() {
-    BooksAPI.getAll().then(books => this.setState({ books }));
+    this.loadBooks();
   }
-  renderBook(book, index) {
+
+  loadBooks = () => BooksAPI.getAll().then(books => this.setState({ books }));
+
+  handleShelfChange = (book, shelf) =>
+    BooksAPI.update(book, shelf).then(this.loadBooks);
+
+  renderBook = (book, index) => {
     return (
       <Book
         key={index}
         title={book.title}
         authors={book.authors}
         image={book.imageLinks.smallThumbnail || book.imageLinks.thumbnail}
+        shelf={book.shelf}
+        onShelfChange={event =>
+          this.handleShelfChange(book, event.target.value)}
       />
     );
-  }
+  };
+
   render() {
     const { books } = this.state;
     return (

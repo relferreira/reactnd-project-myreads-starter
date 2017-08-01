@@ -7,17 +7,23 @@ import * as BooksAPI from './BooksAPI';
 class SearchBooks extends Component {
   state = {
     search: '',
-    results: []
+    books: []
   };
+
   handleSearch = event => {
     this.setState({ search: event.target.value });
 
-    BooksAPI.search(this.state.search, 10).then(results =>
-      this.setState({ results })
-    );
+    BooksAPI.search(this.state.search, 10).then(books => {
+      console.log(books);
+      this.setState({ books });
+    });
   };
+
+  handleShelfChange = (book, shelf) =>
+    BooksAPI.update(book, shelf).then(this.loadBooks);
+
   render() {
-    const { search } = this.state;
+    const { search, books } = this.state;
     return (
       <div className="search-books">
         <div className="search-books-bar">
@@ -43,8 +49,9 @@ class SearchBooks extends Component {
         </div>
         <div className="search-books-results">
           <ol className="books-grid">
-            {this.state.results &&
-              this.state.results.map((book, index) =>
+            {books &&
+              books.length > 0 &&
+              books.map((book, index) =>
                 <li key={index}>
                   <Book
                     title={book.title}
@@ -53,6 +60,9 @@ class SearchBooks extends Component {
                       book.imageLinks.smallThumbnail ||
                       book.imageLinks.thumbnail
                     }
+                    shelf={book.shelf}
+                    onShelfChange={event =>
+                      this.handleShelfChange(book, event.target.value)}
                   />
                 </li>
               )}
