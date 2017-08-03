@@ -1,8 +1,16 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 
 import Book from './Book';
 import * as BooksAPI from './BooksAPI';
+
+export function findShelf(book, shelf) {
+  for (let key in shelf) {
+    if (shelf[key].find(id => id === book.id)) return key;
+  }
+  return 'none';
+}
 
 class SearchBooks extends Component {
   state = {
@@ -20,10 +28,14 @@ class SearchBooks extends Component {
   };
 
   handleShelfChange = (book, shelf) =>
-    BooksAPI.update(book, shelf).then(this.loadBooks);
+    BooksAPI.update(book, shelf).then(shelf => {
+      this.props.onUpdateShelf(shelf);
+      // this.loadBooks();
+    });
 
   render() {
     const { search, books } = this.state;
+    const { shelf } = this.props;
     return (
       <div className="search-books">
         <div className="search-books-bar">
@@ -31,14 +43,6 @@ class SearchBooks extends Component {
             Close
           </Link>
           <div className="search-books-input-wrapper">
-            {/* 
-                  NOTES: The search from BooksAPI is limited to a particular set of search terms.
-                  You can find these search terms here:
-                  https://github.com/udacity/reactnd-project-myreads-starter/blob/master/SEARCH_TERMS.md
-                  
-                  However, remember that the BooksAPI.search method DOES search by title or author. So, don't worry if
-                  you don't find a specific author or title. Every search is limited by search terms.
-                */}
             <input
               type="text"
               placeholder="Search by title or author"
@@ -60,7 +64,7 @@ class SearchBooks extends Component {
                       book.imageLinks.smallThumbnail ||
                       book.imageLinks.thumbnail
                     }
-                    shelf={book.shelf}
+                    shelf={findShelf(book, shelf)}
                     onShelfChange={event =>
                       this.handleShelfChange(book, event.target.value)}
                   />
@@ -72,5 +76,9 @@ class SearchBooks extends Component {
     );
   }
 }
+
+SearchBooks.propTypes = {
+  shelf: PropTypes.object.isRequired
+};
 
 export default SearchBooks;

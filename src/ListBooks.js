@@ -16,6 +16,17 @@ export function getReadBooks(books) {
   return books.filter(book => book.shelf === 'read');
 }
 
+export function formatShelf(books) {
+  const filterByShelf = (books, shelf) =>
+    books.filter(book => book.shelf === shelf).map(book => book.id);
+
+  return {
+    currentlyReading: filterByShelf(books, 'currentlyReading'),
+    read: filterByShelf(books, 'read'),
+    wantToRead: filterByShelf(books, 'wantToRead')
+  };
+}
+
 class ListBooks extends Component {
   state = {
     books: []
@@ -25,7 +36,11 @@ class ListBooks extends Component {
     this.loadBooks();
   }
 
-  loadBooks = () => BooksAPI.getAll().then(books => this.setState({ books }));
+  loadBooks = () =>
+    BooksAPI.getAll().then(books => {
+      this.setState({ books });
+      this.props.onUpdateShelf(formatShelf(books));
+    });
 
   handleShelfChange = (book, shelf) =>
     BooksAPI.update(book, shelf).then(this.loadBooks);
