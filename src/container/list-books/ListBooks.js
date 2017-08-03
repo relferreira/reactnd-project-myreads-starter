@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 
-import Book from './Book';
-import * as BooksAPI from './BooksAPI';
+import Book from '../../component/Book';
+import * as BooksAPI from '../../BooksAPI';
 
 export function getReadingBooks(books) {
   return books.filter(book => book.shelf === 'currentlyReading');

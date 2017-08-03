@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { Route } from 'react-router-dom';
 
-import ListBooks from './ListBooks';
-import SearchBooks from './SearchBooks';
+import ListBooks from './list-books/ListBooks';
+import SearchBooks from './search-books/SearchBooks';
 import './App.css';
 
 class BooksApp extends Component {

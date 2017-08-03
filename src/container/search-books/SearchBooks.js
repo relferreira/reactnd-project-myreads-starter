@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 
-import Book from './Book';
-import * as BooksAPI from './BooksAPI';
+import Book from '../../component/Book';
+import * as BooksAPI from '../../BooksAPI';
 
 export function findShelf(book, shelf) {
   for (let key in shelf) {
