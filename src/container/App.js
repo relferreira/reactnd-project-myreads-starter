@@ -33,42 +33,52 @@ export function updateBooks(books, selectedBook, selectedShelf) {
 class BooksApp extends Component {
   state = {
     shelf: {},
-    books: []
+    books: [],
+    loading: false
   };
 
   componentDidMount() {
     this.loadBooks();
   }
 
-  loadBooks = () =>
+  loadBooks = () => {
+    this.setState({ loading: true });
     BooksAPI.getAll().then(books => {
-      this.setState({ books, shelf: formatShelf(books) });
+      this.setState({ books, shelf: formatShelf(books), loading: false });
     });
+  };
 
   handleUpdateShelf = (selectedBook, selectedShelf) => {
+    this.setState({ loading: true });
     BooksAPI.update(selectedBook, selectedShelf).then(shelf => {
       this.setState({
         shelf,
-        books: updateBooks(this.state.books, selectedBook, selectedShelf)
+        books: updateBooks(this.state.books, selectedBook, selectedShelf),
+        loading: false
       });
     });
   };
 
   render() {
-    const { books, shelf } = this.state;
+    const { books, shelf, loading } = this.state;
     return (
       <div className="app">
         <Route
           exact
           path="/"
           render={() =>
-            <ListBooks books={books} onUpdateShelf={this.handleUpdateShelf} />}
+            <ListBooks
+              books={books}
+              loading={loading}
+              onUpdateShelf={this.handleUpdateShelf}
+            />}
         />
         <Route
           path="/search"
           render={() =>
             <SearchBooks
               shelf={shelf}
+              loading={loading}
               onUpdateShelf={this.handleUpdateShelf}
             />}
         />

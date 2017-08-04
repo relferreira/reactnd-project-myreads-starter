@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
-import Book from '../../component/Book';
+import Book from '../../component/book/Book';
+import Loading from '../../component/loading/Loading';
 
 export function getReadingBooks(books) {
   return books.filter(book => book.shelf === 'currentlyReading');
@@ -36,9 +37,10 @@ class ListBooks extends Component {
   };
 
   render() {
-    const { books } = this.props;
+    const { books, loading } = this.props;
     return (
       <div className="list-books">
+        {loading && <Loading />}
         <div className="list-books-title">
           <h1>MyReads</h1>
         </div>
@@ -79,7 +81,8 @@ class ListBooks extends Component {
 }
 
 ListBooks.propTypes = {
-  books: PropTypes.array.isRequired
+  books: PropTypes.array.isRequired,
+  loading: PropTypes.bool.isRequired
 };
 
 export default ListBooks;

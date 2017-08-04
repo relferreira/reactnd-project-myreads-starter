@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 
-import Book from '../../component/Book';
+import Book from '../../component/book/Book';
+import Loading from '../../component/loading/Loading';
 import * as BooksAPI from '../../BooksAPI';
 
 export function findShelf(book, shelf) {
@@ -15,7 +16,8 @@ export function findShelf(book, shelf) {
 class SearchBooks extends Component {
   state = {
     search: '',
-    books: []
+    books: [],
+    loadingSearch: false
   };
 
   debouce = callback => {
@@ -25,15 +27,18 @@ class SearchBooks extends Component {
 
   shouldShowResults = (search, books) => search && books && books.length > 0;
 
+  shouldShowLoading = () => this.state.loadingSearch || this.props.loading;
+
   handleSearch = event => {
     this.setState({ search: event.target.value });
-    this.debouce(
-      () =>
-        this.state.search &&
-        BooksAPI.search(this.state.search, 10).then(books =>
-          this.setState({ books })
-        )
-    );
+    this.debouce(() => {
+      if (this.state.search) {
+        this.setState({ loadingSearch: true });
+        BooksAPI.search(this.state.search, 10).then(books => {
+          this.setState({ books, loadingSearch: false });
+        });
+      }
+    });
   };
 
   render() {
@@ -41,6 +46,7 @@ class SearchBooks extends Component {
     const { shelf } = this.props;
     return (
       <div className="search-books">
+        {this.shouldShowLoading() && <Loading />}
         <div className="search-books-bar">
           <Link className="close-search" to="/">
             Close
@@ -81,6 +87,7 @@ class SearchBooks extends Component {
 
 SearchBooks.propTypes = {
   shelf: PropTypes.object.isRequired,
+  loading: PropTypes.bool.isRequired,
   debounceTime: PropTypes.number
 };
 
