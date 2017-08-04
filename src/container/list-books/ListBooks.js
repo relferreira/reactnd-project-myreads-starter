@@ -22,22 +22,28 @@ class ListBooks extends Component {
     books: []
   };
 
+  shouldShowEmpty = books => !books || books.length === 0;
+
   renderBook = (book, index) => {
     return (
-      <Book
-        key={index}
-        title={book.title}
-        authors={book.authors}
-        image={book.imageLinks.smallThumbnail || book.imageLinks.thumbnail}
-        shelf={book.shelf}
-        onShelfChange={event =>
-          this.props.onUpdateShelf(book, event.target.value)}
-      />
+      <li key={index}>
+        <Book
+          title={book.title}
+          authors={book.authors}
+          image={book.imageLinks.smallThumbnail || book.imageLinks.thumbnail}
+          shelf={book.shelf}
+          onShelfChange={event =>
+            this.props.onUpdateShelf(book, event.target.value)}
+        />
+      </li>
     );
   };
 
   render() {
     const { books, loading } = this.props;
+    let readingBooks = getReadingBooks(books),
+      wantToReadBooks = getWantToReadBooks(books),
+      readBooks = getReadBooks(books);
     return (
       <div className="list-books">
         {loading && <Loading />}
@@ -50,7 +56,8 @@ class ListBooks extends Component {
               <h2 className="bookshelf-title">Currently Reading</h2>
               <div className="bookshelf-books">
                 <ol className="books-grid">
-                  {getReadingBooks(books).map(this.renderBook)}
+                  {this.shouldShowEmpty(readingBooks) && <li>Empty</li>}
+                  {readingBooks.map(this.renderBook)}
                 </ol>
               </div>
             </div>
@@ -58,7 +65,8 @@ class ListBooks extends Component {
               <h2 className="bookshelf-title">Want to Read</h2>
               <div className="bookshelf-books">
                 <ol className="books-grid">
-                  {getWantToReadBooks(books).map(this.renderBook)}
+                  {this.shouldShowEmpty(wantToReadBooks) && <li>Empty</li>}
+                  {wantToReadBooks.map(this.renderBook)}
                 </ol>
               </div>
             </div>
@@ -66,7 +74,8 @@ class ListBooks extends Component {
               <h2 className="bookshelf-title">Read</h2>
               <div className="bookshelf-books">
                 <ol className="books-grid">
-                  {getReadBooks(books).map(this.renderBook)}
+                  {this.shouldShowEmpty(readBooks) && <li>Empty</li>}
+                  {readBooks.map(this.renderBook)}
                 </ol>
               </div>
             </div>
