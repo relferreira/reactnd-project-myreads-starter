@@ -18,11 +18,21 @@ class SearchBooks extends Component {
     books: []
   };
 
+  debouce = callback => {
+    if (this.timeout) clearTimeout(this.timeout);
+    this.timeout = setTimeout(callback, this.props.debounceTime);
+  };
+
+  shouldShowResults = (search, books) => search && books && books.length > 0;
+
   handleSearch = event => {
     this.setState({ search: event.target.value });
-
-    BooksAPI.search(this.state.search, 10).then(books =>
-      this.setState({ books })
+    this.debouce(
+      () =>
+        this.state.search &&
+        BooksAPI.search(this.state.search, 10).then(books =>
+          this.setState({ books })
+        )
     );
   };
 
@@ -46,8 +56,7 @@ class SearchBooks extends Component {
         </div>
         <div className="search-books-results">
           <ol className="books-grid">
-            {books &&
-              books.length > 0 &&
+            {this.shouldShowResults(search, books) &&
               books.map((book, index) =>
                 <li key={index}>
                   <Book
@@ -71,7 +80,12 @@ class SearchBooks extends Component {
 }
 
 SearchBooks.propTypes = {
-  shelf: PropTypes.object.isRequired
+  shelf: PropTypes.object.isRequired,
+  debounceTime: PropTypes.number
+};
+
+SearchBooks.defaultProps = {
+  debounceTime: 500
 };
 
 export default SearchBooks;
