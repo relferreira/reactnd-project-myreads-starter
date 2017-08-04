@@ -1,9 +1,4 @@
-import {
-  getWantToReadBooks,
-  getReadingBooks,
-  getReadBooks,
-  formatShelf
-} from './ListBooks';
+import { getWantToReadBooks, getReadingBooks, getReadBooks } from './ListBooks';
 
 const BOOKS = [
   {
@@ -40,13 +35,5 @@ describe('List Books', () => {
     let filteredBooks = getReadBooks(BOOKS);
     expect(filteredBooks.length).toEqual(1);
     expect(filteredBooks[0].title).toEqual('Satire TV');
-  });
-
-  it('should get shelf info', () => {
-    expect(formatShelf(BOOKS)).toEqual({
-      currentlyReading: ['123'],
-      read: ['12345'],
-      wantToRead: ['1234']
-    });
   });
 });

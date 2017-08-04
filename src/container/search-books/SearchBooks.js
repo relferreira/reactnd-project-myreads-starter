@@ -21,17 +21,10 @@ class SearchBooks extends Component {
   handleSearch = event => {
     this.setState({ search: event.target.value });
 
-    BooksAPI.search(this.state.search, 10).then(books => {
-      console.log(books);
-      this.setState({ books });
-    });
+    BooksAPI.search(this.state.search, 10).then(books =>
+      this.setState({ books })
+    );
   };
-
-  handleShelfChange = (book, shelf) =>
-    BooksAPI.update(book, shelf).then(shelf => {
-      this.props.onUpdateShelf(shelf);
-      // this.loadBooks();
-    });
 
   render() {
     const { search, books } = this.state;
@@ -66,7 +59,7 @@ class SearchBooks extends Component {
                     }
                     shelf={findShelf(book, shelf)}
                     onShelfChange={event =>
-                      this.handleShelfChange(book, event.target.value)}
+                      this.props.onUpdateShelf(book, event.target.value)}
                   />
                 </li>
               )}
